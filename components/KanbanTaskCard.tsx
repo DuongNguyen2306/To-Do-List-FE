@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import DatePickerModal from './DatePickerModal';
 
 interface Task {
   _id: string;
@@ -52,12 +53,13 @@ interface KanbanTaskCardProps {
   task: Task;
   onEdit: () => void;
   onDelete: (hardDelete?: boolean) => void;
-  onMoveToNextDay: () => void;
+  onMoveToDate: (date: Date) => void;
   isDragging?: boolean;
 }
 
-export function KanbanTaskCard({ task, onEdit, onDelete, onMoveToNextDay, isDragging = false }: KanbanTaskCardProps) {
+export function KanbanTaskCard({ task, onEdit, onDelete, onMoveToDate, isDragging = false }: KanbanTaskCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false);
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
   const [deleteType, setDeleteType] = React.useState<'soft' | 'hard'>('soft');
 
   const {
@@ -88,6 +90,11 @@ export function KanbanTaskCard({ task, onEdit, onDelete, onMoveToNextDay, isDrag
   const confirmDelete = () => {
     onDelete(deleteType === 'hard');
     setShowDeleteDialog(false);
+  };
+
+  const handleMoveToDate = (date: Date) => {
+    onMoveToDate(date);
+    setShowDatePicker(false);
   };
 
   const formatDate = (dateString: string) => {
@@ -191,9 +198,9 @@ export function KanbanTaskCard({ task, onEdit, onDelete, onMoveToNextDay, isDrag
                     <Edit className="mr-2 h-3 w-3" />
                     Chỉnh sửa
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={onMoveToNextDay}>
+                  <DropdownMenuItem onClick={() => setShowDatePicker(true)}>
                     <ArrowRight className="mr-2 h-3 w-3" />
-                    Chuyển sang ngày mai
+                    Chuyển ngày
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => handleDelete('soft')}
@@ -240,6 +247,13 @@ export function KanbanTaskCard({ task, onEdit, onDelete, onMoveToNextDay, isDrag
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <DatePickerModal
+        isOpen={showDatePicker}
+        onClose={() => setShowDatePicker(false)}
+        onConfirm={handleMoveToDate}
+        currentDate={task.dueDate ? new Date(task.dueDate) : new Date()}
+      />
     </>
   );
 }

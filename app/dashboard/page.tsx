@@ -148,14 +148,14 @@ export default function DashboardPage() {
     }
   };
 
-  const handleMoveToNextDay = async (id: string) => {
+  const handleMoveToDate = async (id: string, date: Date) => {
     try {
       const task = tasks.find(t => t._id === id);
       if (!task) return;
 
-      const tomorrow = new Date();
-      tomorrow.setDate(tomorrow.getDate() + 1);
-      tomorrow.setHours(23, 59, 59, 999); // End of tomorrow
+      // Set the time to end of day for the selected date
+      const targetDate = new Date(date);
+      targetDate.setHours(23, 59, 59, 999);
 
       const updateData = {
         title: task.title,
@@ -164,7 +164,7 @@ export default function DashboardPage() {
         priority: task.priority || 'medium',
         project: task.project || '',
         tags: task.tags || [],
-        dueDate: tomorrow.toISOString(),
+        dueDate: targetDate.toISOString(),
         reminderAt: task.reminderAt || ''
       };
 
@@ -173,8 +173,8 @@ export default function DashboardPage() {
         t._id === id ? response.data : t
       ));
     } catch (error: any) {
-      setError('Không thể chuyển task sang ngày mai');
-      console.error('Error moving task to next day:', error);
+      setError('Không thể chuyển task sang ngày đã chọn');
+      console.error('Error moving task to date:', error);
     }
   };
 
@@ -250,7 +250,7 @@ export default function DashboardPage() {
                 onTaskUpdate={handleTaskStatusUpdate}
                 onTaskEdit={openEditModal}
                 onTaskDelete={handleDeleteTask}
-                onTaskMoveToNextDay={handleMoveToNextDay}
+                onTaskMoveToDate={handleMoveToDate}
                 onCreateTask={() => setIsModalOpen(true)}
                 isLoading={isLoading}
               />

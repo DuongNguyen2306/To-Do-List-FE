@@ -43,7 +43,7 @@ interface KanbanBoardProps {
   onTaskUpdate: (taskId: string, newStatus: string) => void;
   onTaskEdit: (task: Task) => void;
   onTaskDelete: (taskId: string, hardDelete?: boolean) => void;
-  onTaskMoveToNextDay: (taskId: string) => void;
+  onTaskMoveToDate: (taskId: string, date: Date) => void;
   onCreateTask: () => void;
   isLoading?: boolean;
 }
@@ -60,7 +60,7 @@ export default function KanbanBoard({
   onTaskUpdate,
   onTaskEdit,
   onTaskDelete,
-  onTaskMoveToNextDay,
+  onTaskMoveToDate,
   onCreateTask,
   isLoading = false
 }: KanbanBoardProps) {
@@ -257,7 +257,7 @@ export default function KanbanBoard({
                       task={task}
                       onEdit={() => onTaskEdit(task)}
                       onDelete={(hardDelete) => onTaskDelete(task._id, hardDelete)}
-                      onMoveToNextDay={() => onTaskMoveToNextDay(task._id)}
+                      onMoveToDate={(date) => onTaskMoveToDate(task._id, date)}
                       isDragging={activeId === task._id}
                     />
                   ))}
